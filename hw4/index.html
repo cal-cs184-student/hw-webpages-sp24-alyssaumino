@@ -53,14 +53,15 @@
     <h2 align="middle">Overview</h2>
     <p>
         This project focuses on building a ray tracer to generate photorealistic images.
+        <br /><br />
         In Part 1, "Ray Generation and Scene Intersection," rays are generated and traced through the scene to determine where they intersect with objects. Our implementation involved setting up a camera model and calculating the rays' direction for each pixel. The challenge here was ensuring accuracy in the ray direction calculation and handling edge cases where rays do not intersect any objects.
-
+        <br /><br />
         In Part 2, "Bounding Volume Hierarchy (BVH)," we optimized the ray-scene intersection process. The BVH accelerates the intersection tests by segmenting the scene into bounding volumes hierarchically, allowing for quick exclusion of objects not intersecting with a ray. The main challenge was determining how to partition nodes into separate recursive traversals that would be best for traversal speed and optimizing tree depth.
-
+        <br /><br />
         In Part 3, "Direct Illumination," we implemented the methods to compute the lighting contributions from light sources directly visible to the point of intersection. Two techniques were used: hemisphere sampling and importance sampling. The former uniformly samples directions over a hemisphere, while the latter targets light sources directly. An issue was reducing noise in the rendered image, especially for scenes with small light sources, which was dealt with by tuning the sampling rate and applying importance sampling.
-
+        <br /><br />
         In Part 4, "Global Illumination," we extended the illumination model to include indirect lighting, capturing light bouncing off surfaces. This was the most complex part for us which involved recursive ray tracing and careful handling of light transport physics. We faced challenges such as computation time which we addressed with Russian Roulette and avoiding artifacts such as light appearing to shine from the top of the scene when there was no lighting source.
-
+        <br /><br />
         In Part 5, "Adaptive Sampling," we aimed to optimize rendering time by dynamically adjusting the number of samples per pixel based on the variance in a region. The idea is to sample areas with more detail at a higher rate.
     </p>
     <br />
@@ -96,17 +97,21 @@
             <tr align="center">
                 <td>
                     <img src="images/part1_CBspheres.png" align="middle" width="400px" />
-                    <figcaption>the bounciest balls</figcaption>
+                    <figcaption>CBspheres.dae</figcaption>
                 </td>
                 <td>
                     <img src="images/part1_teapot.png" align="middle" width="400px" />
-                    <figcaption>teapot, short and stout</figcaption>
+                    <figcaption>teapot.dae</figcaption>
                 </td>
             </tr>
             <tr align="center">
                 <td>
                     <img src="images/part1_banana.png" align="middle" width="400px" />
-                    <figcaption>banana</figcaption>
+                    <figcaption>banana.dae</figcaption>
+                </td>
+                <td>
+                    <img src="images/part1_CBempty.png" align="middle" width="400px" />
+                    <figcaption>CBempty.dae</figcaption>
                 </td>
             </tr>
         </table>
@@ -136,17 +141,21 @@
             <tr align="center">
                 <td>
                     <img src="images/part2_maxplanck.png" align="middle" width="400px" />
-                    <figcaption>who is max planck</figcaption>
+                    <figcaption>maxplanck.dae</figcaption>
                 </td>
                 <td>
                     <img src="images/part2_CBlucy.png" align="middle" width="400px" />
-                    <figcaption>who is lucy??</figcaption>
+                    <figcaption>CBlucy.dae</figcaption>
                 </td>
             </tr>
             <tr align="center">
                 <td>
                     <img src="images/part2_CBdragon.png" align="middle" width="400px" />
-                    <figcaption>roarr</figcaption>
+                    <figcaption>CBdragon.dae</figcaption>
+                </td>
+                <td>
+                    <img src="images/part2_beast.png" align="middle" width="400px" />
+                    <figcaption>beast.dae</figcaption>
                 </td>
             </tr>
         </table>
@@ -194,22 +203,22 @@
             <tr align="center">
                 <td>
                     <img src="images/part3_hemisphere_bunny_64_32.png" align="middle" width="400px" />
-                    <figcaption>hoppity hemisphere</figcaption>
+                    <figcaption>CBbunny.dae</figcaption>
                 </td>
                 <td>
                     <img src="images/part3_bunny_64_32.png" align="middle" width="400px" />
-                    <figcaption>same hops no more hemisphere</figcaption>
+                    <figcaption>CBbunny.dae</figcaption>
                 </td>
             </tr>
             <br />
             <tr align="center">
                 <td>
                     <img src="images/part3_hemisphere_CBspheres_lambertian.png" align="middle" width="400px" />
-                    <figcaption>lambertian spheres, hemisphere.dae</figcaption>
+                    <figcaption>CBspheres_lambertian.dae</figcaption>
                 </td>
                 <td>
                     <img src="images/part3_CBspheres_lambertian.png" align="middle" width="400px" />
-                    <figcaption>same spheres but light sampling.dae</figcaption>
+                    <figcaption>CBspheres_lambertian.dae</figcaption>
                 </td>
             </tr>
             <br />
@@ -254,7 +263,7 @@
         Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
     </h3>
     <p>
-        YOUR RESPONSE GOES HERE
+        Overall, uniform hemisphere sampling gives noisier results that look more grainy, while lighting sampling tends to produce smoother, cleaner looking renders for the same files. This is actually an expected effect from lecture, since drawing random directions uniformly from the hemisphere means that only some of these random directions will point towards the light. For all the other directions that do not point towards the light, we wouldn’t end up getting any incoming radiance, which explains the noisy appearance of the uniform hemisphere sampling results. On the other hand, if we sample only over the light source area, then all the sampled directions would point towards the light source and we would get some incoming radiance (assuming there is no occlusion). So in general lighting sampling isn’t as susceptible to having many of the random direction samples potentially not hitting the light at all, which helps avoid the noisy, grainy looking results that we see above for uniform hemisphere sampling.
     </p>
     <br />
 
@@ -273,7 +282,9 @@
     <p>
         The at_least_one_bounce_radiance function is recursive, where each recursive call represents an additional ‘bounce’ of light. The function simulates indirect lighting, otherwise light that has reflected off one or more surfaces and is not directly coming from a light source before reaching the camera.
         The function first establishes a local coordinate space at the point of intersection using the surface normal. This is done with the transformation matrices o2w and w2o which convert vectors to and from this local space. The local space simplifies many calculations, as it allows us to treat the surface normal as if it were pointing straight up. With the incoming ray r and intersection information isect, we calculate the hit point hit_p and the outgoing direction w_out in the local space.
+        <br /><br />
         Then, the function attempts to gather light from direct sources by calling one_bounce_radiance. If the ray has reached a depth greater than max_ray_depth, we use Russian Roulette with a termination probability of 0.35 to decide whether to terminate the path. If we continue, the sample_f function is called to choose a new direction for the recursive ray. This direction is transformed back into world space, and a new ray is cast into the scene. If this new ray intersects another surface, the function calls itself recursively to gather indirect illumination from that point. If the isAccumBounces flag is true, the radiance from subsequent bounces is accumulated; otherwise, we return the radiance from the specific bounce indicated by max_ray_depth. This recursive process builds up the path of light from the camera through the scene, simulating indirect illumination and producing rich, realistic images.
+        <br /><br />
         The sample_f function is responsible for simulating the reflective behavior of diffuse surfaces. In a diffuse reflection, light hits the surface and scatters uniformly in all directions above the surface. The sample_f function needs to perform two tasks. First, it samples an incoming direction wi over the hemisphere centered around the surface normal using a cosine-weighted distribution provided by the Sampler object. This distribution gives higher probability to directions closer to the normal, simulating the physical behavior of diffuse surfaces where light is more likely to scatter at angles close to the perpendicular. The probability density function pdf for this sampled direction is also calculated and stored. Second, the function calculates and returns the BSDF value f(wi -> wo) for the sampled incoming direction wi and the outgoing direction wo (the direction toward the camera). The BSDF value represents the ratio of reflected radiance exiting along wo to the incident irradiance along wi, which, for a perfectly diffuse surface, is constant across all directions and equal to the surface's reflectance.
         In the global illumination function est_radiance_global_illumination, we estimate the total radiance at a point, accounting for both direct and indirect illumination up to max_ray_depth bounces.
     </p>
@@ -407,7 +418,7 @@
     </div>
     <br />
     <p>
-        YOUR RESPONSE GOES HERE
+        The first two images for max_ray_depth of 0 and max_ray_depth of 1 are just the zero bounce lighting and zero bounce lighting plus once bounce lighting (direct lighting), respectively. The first image for max_ray_depth of 0 is definitely the most visually different from the others, given that no light has been able to bounce off the sides of the cornell box or the bunny yet. The next most visually different is max_ray_depth of 1, which has drastically darker shading compared to the other bunny images. Notably, the ceiling is also pitch black. The next four images for max_ray_depths of 2, 3, 4, and 5 are extremely similar, with the biggest contrast being max_ray_depth 2 compared to 3 (or the other images), where it’s easiest to tell that the shading around the ceiling, bunny’s curves, and shadows have gone from darker to lighter. Otherwise there is hardly a noticeable difference between the remaining pictures at all, which was the same result as the spheres as rendered from the example in the spec. This definitely poses a trade-off between image quality and rendering time as represented by max_ray_depth, especially if time-consuming gains from additional bounces are hardly noticeable to the human eye.
     </p>
     <br />
 
@@ -498,7 +509,7 @@
     </div>
     <br />
     <p>
-        YOUR EXPLANATION GOES HERE
+        Overall, the visual quality of the rendered view increases with the sample-per-pixel rate. The results for 1 and 2 samples per pixel are particularly egregious with heavily distorted / pixelated effects around the ceiling and spheres, though the results for 4 and 8 are also pretty grainy. All of these pictures look visually low quality, though the worst of the distracting speckled effect is relatively tamed by 8 samples per pixel. The image quality continues to increase as the sample-per-pixel rates go up, with 16, 64, and 1024 samples per pixel becoming gradually more smooth. Actually, the pixelated effect is visually unnoticeable by 16 samples per pixel, though the graininess doesn’t completely go away until 1024 samples per pixel. That being said, the image for 64 samples per pixel has decent visual appeal, and could represent a trade off point between photo quality and rendering time / samples per pixel.
     </p>
     <br />
 
@@ -534,11 +545,11 @@
             </tr>
             <tr align="center">
                 <td>
-                    <img src="images/Part5_scene2.png" align="middle" width="400px" />
+                    <img src="images/part5_scene2.png" align="middle" width="400px" />
                     <figcaption>Rendered image (example2.dae)</figcaption>
                 </td>
                 <td>
-                    <img src="images/Part5_scene2_rate.png" align="middle" width="400px" />
+                    <img src="images/part5_scene2_rate.png" align="middle" width="400px" />
                     <figcaption>Sample rate image (example2.dae)</figcaption>
                 </td>
             </tr>
@@ -553,7 +564,7 @@
         At the end, if you worked with a partner, please write a short paragraph together for your final report that describes how you collaborated, how it went, and what you learned.
     </h3>
     <p>
-        YOUR RESPONSE GOES HERE
+        We collaborated via live sharing sessions (both in-person and over call) for most of tasks 1, 3, and 4. We would live share the code off of each other’s computers, and the person able to actually see the rendered images (whoever was live sharing) would physically show the result to the other person. Tasks 2 and 5 were completed mostly asynchronously, since we both had times when one of us wasn’t able to work on the project for a couple days. The collaboration went well except for the rendering, particularly the more compute-intensive renders. This was because one of us has a cheap computer not able to render even easier images, and found that the hive machines had various connection and space issues. So many of the more expensive renders had to be done by one person. We learned that the hive machines aren’t too dependable, and also learned that office hours can be very helpful. We attended office hours after getting stuck on part 4, and finished the task after being helped by a TA.
     </p>
     <br />
 
