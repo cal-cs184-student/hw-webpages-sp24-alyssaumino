@@ -729,6 +729,9 @@
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-1">
   <h2 align="middle">Part 1: Masses and springs</h2>
   </a>
+  <p>
+      Overview: In Part 1, we are implementing a grid-based system of point masses and springs, utilizing structures defined in spring.h, pointMass.h, and cloth.h. Our main task in Cloth::buildGrid in cloth.cpp is to construct an evenly spaced grid of point masses, determined by num_width_points and num_height_points, with positioning that varies based on the cloth's orientation, either horizontal or vertical. This involves adjusting y or z coordinates and incorporating a degree of randomness for vertical orientations. After setting up these point masses and identifying which ones are pinned, we need to establish springs to enforce structural, shearing, and bending constraints. We must pay close attention to the positioning and connections of these masses, considering edge cases and efficient vector operations.
+  </p>
     <blockquote><b>
       Take some screenshot(s) of <i>scene/pinned2.json</i> from a viewing angle where you can clearly see the cloth wireframe 
       to show the structure of your point masses and springs. 
@@ -1078,7 +1081,7 @@
     </b></blockquote>
 
     <p>
-        A shader program is a specialized program used to perform shading: the process of determining how light interacts with surfaces in a 3D scene. The vertex shader's primary role is to process individual vertices of a 3D object. It transforms vertex data from object space to screen space and performs operations like applying transformations and calculating initial lighting values. This transformed data is then used in the rasterization process to create fragments (potential pixels) for each polygon. Next, the fragment shader operates on these fragments to determine the final color of each pixel. This stage involves detailed calculations that consider various factors like lighting, texture, and the material properties of the surface. The combination of these two shaders allows for a broad range of visual effects, from simple flat shading to complex effects like texture mapping, bump and displacement mapping, and even environment-mapped reflections.
+        A shader program is a specialized program used to perform shading: the process of determining how light interacts with surfaces in a 3D scene, primarily executed on the GPU. The vertex shader's primary role is to process individual vertices of a 3D object. It transforms vertex data from object space to screen space and performs operations like applying transformations and calculating initial lighting values. This transformed data is then used in the rasterization process to create fragments (potential pixels) for each polygon. Next, the fragment shader operates on these fragments to determine the final color of each pixel. This stage involves detailed calculations that consider various factors like lighting, texture, and the material properties of the surface. The combination of these two shaders allows for a broad range of visual effects, from simple flat shading to complex effects like texture mapping, bump and displacement mapping, and even environment-mapped reflections.
     </p>
 
 
